@@ -29,17 +29,21 @@
     force_apt_get: yes
   when: ansible_distribution == 'Ubuntu'
 
+#- name: Updating the package using shell module for Ubuntu
+#  command: apt-get update
+#  when: ansible_distribution == 'Ubuntu' 
+
 - name: Installing rpm package manager for yum
   yum:
     name: rpm
     state: present
   when: ansible_distribution == 'CentOS'
 
-- name: Installing alien package manager for ubuntu
-  yum:
-    name: alien
-    state: present
-  when: ansible_distribution == 'Ubuntu'
+#- name: Installing alien package manager for ubuntu
+#  yum:
+#    name: alien
+#    state: present
+#  when: ansible_distribution == 'Ubuntu'
 
 - name: Unpackaging the mysql-community-release-el6-5.noarch.rpm package for CentOS platforms
   yum:
@@ -48,13 +52,13 @@
   when: ansible_distribution == 'CentOS'
 
 
-- name: Unpackaging the mysql-community-release-el6-5.noarch.rpm package for Ubuntu platforms
-  command: alien -d /var/mysql-community-release-el6-5.noarch.rpm
-  become: yes
-  when: ansible_distribution == 'Ubuntu'
+#- name: Unpackaging the mysql-community-release-el6-5.noarch.rpm package for Ubuntu platforms
+#  command: alien -d /var/mysql-community-release-el6-5.noarch.rpm
+#  become: yes
+#  when: ansible_distribution == 'Ubuntu'
 
 - name: Installing python-mysqldb for ubuntu
-  yum:
+  apt:
     name: python-mysqldb
     state: present
   when: ansible_distribution == 'Ubuntu'

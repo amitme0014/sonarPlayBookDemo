@@ -1,8 +1,8 @@
 [Servers]
 #centos6 ansible_ssh_host=52.205.248.206 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amithp.pem
-centos7 ansible_ssh_host=18.209.28.221 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amithp.pem
-ubuntu14 ansible_ssh_host=52.90.74.33 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amithp.pem
-ubuntu16 ansible_ssh_host=54.237.204.83 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amithp.pem ansible_python_interpreter=/usr/bin/python2.7
-ubuntu18 ansible_ssh_host=52.91.159.160 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amithp.pem
+#centos7 ansible_ssh_host=34.227.67.172 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
+ubuntu14 ansible_ssh_host=35.168.14.198 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
+
+#ubuntu18 ansible_ssh_host=52.91.159.160 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amithp.pem
 
 

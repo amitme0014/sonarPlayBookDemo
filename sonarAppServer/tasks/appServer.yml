@@ -51,11 +51,9 @@
 #- apt_repository:
 #    repo: 'ppa:webupd8team/java'
   
-- name: Update and upgrade apt packages
+- name: Run the equivalent of "apt-get update" as a separate step
   apt:
-    upgrade: yes
-    update_cache: yes
-    force_apt_get: yes
+    update_cache: yes 
   when: ansible_distribution == 'Ubuntu'
 
 #- name: Installing java 1.8
@@ -100,41 +98,21 @@
   command: iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 9000
   when: ansible_distribution == 'CentOS'
 
-- name: Downloading sonar zip package for ubuntu
+- name: Ensure Sonar is running and set to start on boot.
+  service: name=sonar state=started enabled=yes
+  when: ansible_distribution == 'CentOS'
+
+- name: Downloading debian package of sonar for ubuntu
   get_url:
-    url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.5.zip
+    url: https://nchc.dl.sourceforge.net/project/sonar-pkg/deb/binary/sonar_7.1_all.deb
     dest: /opt
-    mode: 0440
-  when: ansible_distribution == 'Ubuntu'
- 
-- name: installing unzip 
+
+- name: Downloading debian package for ubuntu
   apt:
-    name: unzip
+    deb: /opt/sonar_7.1_all.deb
+  when: ansible_distribution == 'Ubuntu'  
+
+- name: Ensure Sonar is running and set to start on boot.
+  service: name=sonar state=started enabled=yes
   when: ansible_distribution == 'Ubuntu'
 
-- name: Unarchive a file that is already on the remote machine
-  unarchive:
-    src: /opt/sonarqube-6.7.5.zip
-    dest: /opt
-    remote_src: yes
-  when: ansible_distribution == 'Ubuntu'
-
-- name: copying sonar.properties
-  template: src=sonar.properties dest=/opt/sonarqube-6.7.5/conf/sonar.properties
-  when: ansible_distribution == 'Ubuntu'
-
-- name: moving sonar.sh into init directory
-  command: cp /opt/sonarqube-6.7.5/bin/linux-x86-64/sonar.sh /etc/init.d/sonar
-  when: ansible_distribution == 'Ubuntu'
-
-- name: configuring sonar script file
-  template: src=sonar dest=/etc/init.d
-  when: ansible_distribution == 'Ubuntu'
-
-- name: Running shell commands to use sonar as a service in ubuntu
-  shell: 
-
-- name: Start service sonar, if not started
-  service:
-    name: sonar
-    state: started
