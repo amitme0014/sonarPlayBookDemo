@@ -1,0 +1,6 @@
+---
+
+- hosts: Servers
+  become: yes
+  roles:
+    - sonarAppServer

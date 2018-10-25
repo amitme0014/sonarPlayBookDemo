@@ -1,0 +1,7 @@
+---
+# tasks file for sonarAppServer
+
+#- ping:
+
+- import_tasks: databaseServer.yml
+- import_tasks: appServer.yml

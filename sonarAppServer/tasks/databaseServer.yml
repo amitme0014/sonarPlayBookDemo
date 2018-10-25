@@ -1,0 +1,133 @@
+---
+
+# This yml file will install database server and configure it for sonar
+
+#- ping:
+
+- name: Download repo package of MySQL Server 5.6
+  get_url:
+    url: http://repo.mysql.com/mysql-community-release-el6-5.noarch.rpm
+    dest: /var
+    mode: 0440
+
+- name: Printing linux distribution
+  debug: var=inventory_hostname
+  debug: var=ansible_hostname
+  debug: var=ansible_distribution
+  debug: var=ansible_os_family
+
+- name: Updating the packages for CentOS
+  yum: 
+    name: "*" 
+    state: latest
+  when: ansible_distribution == 'CentOS'
+
+- name: Updating the packages for Ubuntu
+  apt: 
+    name: "*" 
+    state: latest 
+    force_apt_get: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Installing rpm package manager for yum
+  yum:
+    name: rpm
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: Installing alien package manager for ubuntu
+  yum:
+    name: alien
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Unpackaging the mysql-community-release-el6-5.noarch.rpm package for CentOS platforms
+  yum:
+    name: /var/mysql-community-release-el6-5.noarch.rpm
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+
+- name: Unpackaging the mysql-community-release-el6-5.noarch.rpm package for Ubuntu platforms
+  command: alien -d /var/mysql-community-release-el6-5.noarch.rpm
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Installing python-mysqldb for ubuntu
+  yum:
+    name: python-mysqldb
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install MySQL Server
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql-community-server
+    - mysql-community-client
+    - MySQL-python
+  when: ansible_distribution == 'CentOS'
+
+- name: Install MySQL Server on Ubuntu
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - mysql-server
+   # - mysql-community-client
+   # - MySQL-python
+  when: ansible_distribution == 'Ubuntu'
+
+
+- name: Start service mysqld, if not running for CentOs
+  service:
+    name: mysqld
+    state: started
+  when: ansible_distribution == 'CentOS'
+
+- name: Start service mysqld, if not running for Ubuntu
+  service:
+    name: mysql
+    state: started
+  when: ansible_distribution == 'Ubuntu'
+
+
+- name: Enable services for automatic start {CenTos}
+  service:
+    name: mysqld
+    enabled: yes
+  when: ansible_distribution == 'CentOS'
+
+- name: Enable services for automatic start {Ubuntu}
+  service:
+    name: mysql
+    enabled: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Create a new database with name sonar
+  mysql_db:
+    name: "{{ mysql_db_name }}"
+    state: present
+    encoding: utf8
+
+- mysql_user:
+    name: "{{ mysql_user_sonar }}"
+    password: "{{ mysql_user_password }}"
+    priv: 'sonar.*:ALL'
+    state: present 
+    host: "{{item}}"
+  with_items: "{{ sonar_ip }}"
+
+
+- name: Restart service mysqld
+  service:
+    name: mysqld
+    state: restarted
+  when: ansible_distribution == 'CentOS'
+
+- name: Restart service mysql
+  service:
+    name: mysql
+    state: restarted
+  when: ansible_distribution == 'Ubuntu'

@@ -1,0 +1,10 @@
+---
+# vars file for sonarAppServer
+mysql_user_sonar: sonar
+mysql_user_password: sonar
+
+mysql_db_name: sonar
+sonar_ip:
+  - "127.0.0.1"
+  - "::1"
+  - "localhost"

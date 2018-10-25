@@ -1,0 +1,140 @@
+- name: remove the java-1.7.0 package
+  yum:
+    name: java-1.7.0-openjdk
+    state: absent
+  when: ansible_distribution == 'CentOS'
+ 
+
+- name: Installing the java-1.8.0-openjdk package
+  yum:
+    name: java-1.8.0-openjdk-devel
+    state: present
+  when: ansible_distribution == 'CentOS'
+
+- name: remove the java-1.7.0 package
+  apt:
+    name: openjdk-7-jre-headless
+    state: absent
+  when: ansible_distribution == 'Ubuntu'
+
+
+#- name: Installing the java-1.8.0-openjdk package
+#  apt:
+#    name: openjdk-8-jre-headless
+#    state: present
+#  when: ansible_distribution == 'Ubuntu'
+
+- name: Install add-apt-repostory
+  become: yes
+  apt: name=software-properties-common state=latest
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Add Oracle Java Repository
+  become: yes
+  apt_repository: repo='ppa:webupd8team/java'
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Accept Java 8 License
+  become: yes
+  debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Oracle Java 8
+  become: yes
+  apt: name={{item}} state=latest
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
+    - oracle-java8-set-default
+  when: ansible_distribution == 'Ubuntu'
+
+#- apt_repository:
+#    repo: 'ppa:webupd8team/java'
+  
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    force_apt_get: yes
+  when: ansible_distribution == 'Ubuntu'
+
+#- name: Installing java 1.8
+#  apt:
+#    name: oracle-java8-installer
+#    state: present
+#    force_apt_get: yes
+#  when: ansible_distribution == 'Ubuntu'
+
+- name: Download sonar.repo
+  get_url:
+    url: http://downloads.sourceforge.net/project/sonar-pkg/rpm/sonar.repo
+    dest: /etc/yum.repos.d/sonar.repo
+    mode: 0440
+  when: ansible_distribution == 'CentOS'
+
+- name: installing sonar
+  yum:
+    name: sonar-6.2-1
+    state: present
+  when: ansible_distribution == 'CentOS' 
+
+- name: copying sonar.properties
+  template: src=sonar.properties dest=/opt/sonar/conf/sonar.properties
+  when: ansible_distribution == 'CentOS'  
+
+- file:
+    path: /etc/init.d/sonar
+    owner: root
+    group: root
+    mode: 0777
+  when: ansible_distribution == 'CentOS'
+  
+- name: Ensure Sonar is running and set to start on boot.
+  service: name=sonar state=started enabled=yes
+  when: ansible_distribution == 'CentOS'
+
+- name: Aadding iptable rule
+  become: yes
+  command: iptables -I INPUT 1 -p tcp --dport 9000 -j ACCEPT -m comment --comment "port 9000"
+  command: iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
+  command: iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 9000
+  when: ansible_distribution == 'CentOS'
+
+- name: Downloading sonar zip package for ubuntu
+  get_url:
+    url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.5.zip
+    dest: /opt
+    mode: 0440
+  when: ansible_distribution == 'Ubuntu'
+ 
+- name: installing unzip 
+  apt:
+    name: unzip
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Unarchive a file that is already on the remote machine
+  unarchive:
+    src: /opt/sonarqube-6.7.5.zip
+    dest: /opt
+    remote_src: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: copying sonar.properties
+  template: src=sonar.properties dest=/opt/sonarqube-6.7.5/conf/sonar.properties
+  when: ansible_distribution == 'Ubuntu'
+
+- name: moving sonar.sh into init directory
+  command: cp /opt/sonarqube-6.7.5/bin/linux-x86-64/sonar.sh /etc/init.d/sonar
+  when: ansible_distribution == 'Ubuntu'
+
+- name: configuring sonar script file
+  template: src=sonar dest=/etc/init.d
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Running shell commands to use sonar as a service in ubuntu
+  shell: 
+
+- name: Start service sonar, if not started
+  service:
+    name: sonar
+    state: started
