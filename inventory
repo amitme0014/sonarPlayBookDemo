@@ -1,7 +1,7 @@
 [Servers]
 #centos6 ansible_ssh_host=18.208.230.19 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
-centos7 ansible_ssh_host=54.210.35.86 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
-ubuntu16 ansible_ssh_host=35.175.229.111 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
-ubuntu18 ansible_ssh_host=18.207.177.126 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
+centos7 ansible_ssh_host=54.175.255.42 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
+ubuntu16 ansible_ssh_host=54.89.148.101 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
+ubuntu18 ansible_ssh_host=18.234.69.224 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/ec2-user/amitCgNV.pem
 
 
