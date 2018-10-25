@@ -57,11 +57,12 @@
 #  become: yes
 #  when: ansible_distribution == 'Ubuntu'
 
-- name: Installing python-mysqldb for ubuntu
-  apt:
-    name: python-mysqldb
-    state: present
-  when: ansible_distribution == 'Ubuntu'
+
+#- name: Installing python-mysqldb for ubuntu
+#  apt:
+#    name: python-mysqldb
+#    state: present
+#  when: ansible_distribution == 'Ubuntu'
 
 - name: Install MySQL Server
   yum:
@@ -80,7 +81,7 @@
   with_items:
     - mysql-server
    # - mysql-community-client
-   # - MySQL-python
+    - python-mysqldb
   when: ansible_distribution == 'Ubuntu'
 
 
